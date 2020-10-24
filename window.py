@@ -23,14 +23,16 @@ class Window(wx.Frame):
         dialog = wx.FileDialog(None, "select", os.getcwd(), "", wildcard)
         if dialog.ShowModal() == wx.ID_OK:
             self.file_name.SetValue(dialog.GetPath())
-            dialog.Destroy
+            dialog.Destroy()
         self.image_wx = wx.Image(self.file_name.GetValue(), wx.BITMAP_TYPE_JPEG)
         self.image_pil = image.get_image(self.file_name.GetValue())
         self.show()
 
     def get_digit(self, event):
-        pred = image.predict(model=self.model, image=self.image_pil)
-        self.answer = wx.StaticText(self.panel, -1, str(pred.idxmax()[0]), (600, 10))
+        ans, pred = image.predict(model=self.model, image=self.image_pil)
+        box = wx.MessageDialog(None, u"手写数字识别为：" + str(ans), u"识别结果", wx.OK)
+        answer = box.ShowModal()
+        box.Destroy()
 
     def show(self):
         temp = self.image_wx.ConvertToBitmap()
