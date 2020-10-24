@@ -23,13 +23,11 @@ def image_color_invert(image):
 
 def process_pred(pred):
     pred = np.exp(pred)
-    pred = (pred - pred.mean()) / pred.std()
-    pred = (pred - pred.min()) / (pred.max() - pred.min())
     pred = pred / pred.sum()
-    pred = pred.round(6)
-    return pred.reshape(10, 1)
+    return pred.round(6).reshape(10, 1)
 
 
 def predict(model, image):
     pred = model(Variable(image_to_tensor(image_color_invert(image)))).data.numpy()
-    return pd.DataFrame(process_pred(pred), columns=["Prob"])
+    pred = pd.DataFrame(process_pred(pred), columns=["Prob"])
+    return pred.idxmax()[0], pred
